@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#f8f8f1"/>
+  <circle cx="1060" cy="80" r="170" fill="#c9dfec"/>
+  <circle cx="80" cy="600" r="210" fill="#c2d468" opacity=".55"/>
+  <circle cx="1000" cy="590" r="110" fill="#f6a61c" opacity=".25"/>
+  <text x="90" y="210" font-family="Georgia,serif" font-size="74" font-weight="700" fill="#553b33">Ruang Tumbuh</text>
+  <text x="90" y="285" font-family="Arial,sans-serif" font-size="31" fill="#61813f">Cerita dan wawasan keluarga Iqrolife</text>
+  <text x="90" y="380" font-family="Arial,sans-serif" font-size="24" fill="#6f6964">Fitrah · Bertahap · Paripurna</text>
+  <circle cx="950" cy="310" r="170" fill="#fff" opacity=".8"/>
+  <path d="M950 420V210M950 265c-65-55-115-35-125 25 60 22 98 8 125-25m0 65c70-60 128-36 132 30-62 19-103 6-132-30" fill="none" stroke="#61813f" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
