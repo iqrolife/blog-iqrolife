@@ -1,0 +1,9 @@
+# Keep secrets and local build output out of the image. Server secrets (SANITY_API_WRITE_TOKEN,
+# SANITY_REVALIDATE_SECRET) come from the container environment (docker compose env_file).
+.env*
+!.env.example
+.git
+.github
+node_modules
+.next
+npm-debug.log*
