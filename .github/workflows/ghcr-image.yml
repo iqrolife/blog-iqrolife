@@ -12,7 +12,8 @@ permissions:
 
 concurrency:
   group: ghcr-image-${{ github.ref }}
-  cancel-in-progress: true
+  # Never cancel a run mid-deploy; newer pushes queue behind it.
+  cancel-in-progress: false
 
 jobs:
   image:
@@ -49,3 +50,29 @@ jobs:
             NEXT_PUBLIC_SANITY_PROJECT_ID=${{ vars.NEXT_PUBLIC_SANITY_PROJECT_ID || 'oi1l4ox1' }}
             NEXT_PUBLIC_SANITY_DATASET=${{ vars.NEXT_PUBLIC_SANITY_DATASET || 'production' }}
             NEXT_PUBLIC_SITE_URL=https://blog.iqrolife.id
+
+  # Deploy otomatis ke VPS. Kunci VPS_DEPLOY_KEY hanya bisa menjalankan scripts/ci-deploy.sh
+  # (forced command di authorized_keys), yang menjalankan migrasi (kss-backend), health check,
+  # dan rollback sendiri bila image baru tidak sehat.
+  deploy:
+    needs: image
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Deploy iqrolife-blog ke VPS
+        env:
+          DEPLOY_KEY: ${{ secrets.VPS_DEPLOY_KEY }}
+          VPS_HOST: 43.173.13.2
+          VPS_HOST_KEY: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFrDzplzRK0JfCzXc7G9XKWn/JZ6tdaOuybZi0iiZ4ii
+        run: |
+          if [ -z "$DEPLOY_KEY" ]; then
+            echo "::error::Secret VPS_DEPLOY_KEY belum diisi; image sudah di-push tapi belum di-deploy."
+            exit 1
+          fi
+          install -m 700 -d ~/.ssh
+          printf '%s\n' "$DEPLOY_KEY" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          echo "$VPS_HOST $VPS_HOST_KEY" > ~/.ssh/known_hosts
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o BatchMode=yes -o ServerAliveInterval=30 \
+            "ubuntu@$VPS_HOST" "deploy iqrolife-blog sha-${GITHUB_SHA::7}"
